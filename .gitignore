@@ -1,0 +1,19 @@
+# Data
+data/raw/
+data/processed/
+
+# Model weights (too large for GitHub)
+models/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# System
+.DS_Store
+
+# Environments
+.env
+*.egg-info/

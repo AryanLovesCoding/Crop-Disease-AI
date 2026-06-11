@@ -1,0 +1,107 @@
+{
+  "Tomato_Early_blight": {
+    "severity": "Moderate",
+    "description": "Fungal disease causing dark spots with concentric rings on lower leaves.",
+    "treatment": "Apply copper-based fungicide every 7-10 days. Remove infected leaves immediately.",
+    "prevention": "Rotate crops yearly. Avoid overhead watering. Ensure good air circulation.",
+    "urgency": "Act within 3-5 days"
+  },
+  "Tomato_Late_blight": {
+    "severity": "High",
+    "description": "Aggressive fungal disease causing water-soaked lesions on leaves and stems.",
+    "treatment": "Apply chlorothalonil or mancozeb fungicide immediately. Remove and destroy infected plants.",
+    "prevention": "Use resistant varieties. Avoid wet foliage. Apply preventive fungicide in humid weather.",
+    "urgency": "Act within 24 hours"
+  },
+  "Tomato_Leaf_Mold": {
+    "severity": "Moderate",
+    "description": "Fungal disease causing yellow patches on upper leaf surface and olive-green mold below.",
+    "treatment": "Apply fungicide containing chlorothalonil. Improve greenhouse ventilation.",
+    "prevention": "Reduce humidity below 85%. Space plants for airflow. Avoid wetting leaves.",
+    "urgency": "Act within 3-5 days"
+  },
+  "Tomato_Septoria_leaf_spot": {
+    "severity": "Moderate",
+    "description": "Fungal disease causing small circular spots with dark borders on leaves.",
+    "treatment": "Apply copper or chlorothalonil fungicide. Remove infected lower leaves.",
+    "prevention": "Mulch around plants. Rotate crops. Stake plants to improve air circulation.",
+    "urgency": "Act within 3-5 days"
+  },
+  "Tomato_Spider_mites_Two_spotted_spider_mite": {
+    "severity": "Moderate",
+    "description": "Tiny mites causing stippled yellowing on leaves, especially in hot dry conditions.",
+    "treatment": "Apply miticide or neem oil spray. Increase humidity around plants.",
+    "prevention": "Monitor regularly. Avoid water stress. Introduce predatory mites as biocontrol.",
+    "urgency": "Act within 3-5 days"
+  },
+  "Tomato__Target_Spot": {
+    "severity": "Moderate",
+    "description": "Fungal disease causing circular target-like lesions on leaves and fruit.",
+    "treatment": "Apply azoxystrobin or chlorothalonil fungicide.",
+    "prevention": "Remove crop debris. Rotate crops. Avoid overhead irrigation.",
+    "urgency": "Act within 3-5 days"
+  },
+  "Tomato__Tomato_YellowLeaf__Curl_Virus": {
+    "severity": "High",
+    "description": "Viral disease spread by whiteflies causing leaf curling and yellowing.",
+    "treatment": "No cure available. Remove and destroy infected plants immediately to prevent spread.",
+    "prevention": "Control whitefly populations. Use reflective mulch. Plant resistant varieties.",
+    "urgency": "Act within 24 hours"
+  },
+  "Tomato__Tomato_mosaic_virus": {
+    "severity": "High",
+    "description": "Viral disease causing mottled light and dark green patterns on leaves.",
+    "treatment": "No cure available. Remove infected plants. Disinfect tools with bleach solution.",
+    "prevention": "Use certified disease-free seeds. Wash hands before handling plants.",
+    "urgency": "Act within 24 hours"
+  },
+  "Tomato_Bacterial_spot": {
+    "severity": "Moderate",
+    "description": "Bacterial disease causing small water-soaked spots on leaves and fruit.",
+    "treatment": "Apply copper-based bactericide. Remove heavily infected plant parts.",
+    "prevention": "Use disease-free seeds. Avoid overhead irrigation. Rotate crops.",
+    "urgency": "Act within 3-5 days"
+  },
+  "Tomato_healthy": {
+    "severity": "None",
+    "description": "Plant appears healthy with no signs of disease.",
+    "treatment": "No treatment needed. Continue regular care.",
+    "prevention": "Maintain regular watering, fertilization and monitoring schedule.",
+    "urgency": "No action needed"
+  },
+  "Potato___Early_blight": {
+    "severity": "Moderate",
+    "description": "Fungal disease causing dark spots with yellow halos on older leaves.",
+    "treatment": "Apply mancozeb or chlorothalonil fungicide every 7-14 days.",
+    "prevention": "Use certified seed potatoes. Rotate crops. Maintain plant nutrition.",
+    "urgency": "Act within 3-5 days"
+  },
+  "Potato___Late_blight": {
+    "severity": "High",
+    "description": "Devastating fungal disease that can destroy entire crop within days.",
+    "treatment": "Apply metalaxyl or cymoxanil fungicide immediately. Destroy infected plants.",
+    "prevention": "Use resistant varieties. Apply preventive fungicide. Avoid overhead irrigation.",
+    "urgency": "Act within 24 hours"
+  },
+  "Potato___healthy": {
+    "severity": "None",
+    "description": "Plant appears healthy with no signs of disease.",
+    "treatment": "No treatment needed. Continue regular care.",
+    "prevention": "Maintain regular watering, fertilization and monitoring schedule.",
+    "urgency": "No action needed"
+  },
+  "Pepper__bell___Bacterial_spot": {
+    "severity": "Moderate",
+    "description": "Bacterial disease causing water-soaked lesions on leaves and fruit.",
+    "treatment": "Apply copper-based bactericide. Remove infected plant material.",
+    "prevention": "Use disease-free seeds. Avoid working with wet plants. Rotate crops.",
+    "urgency": "Act within 3-5 days"
+  },
+  "Pepper__bell___healthy": {
+    "severity": "None",
+    "description": "Plant appears healthy with no signs of disease.",
+    "treatment": "No treatment needed. Continue regular care.",
+    "prevention": "Maintain regular watering, fertilization and monitoring schedule.",
+    "urgency": "No action needed"
+  }
+}
