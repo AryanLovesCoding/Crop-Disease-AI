@@ -70,6 +70,7 @@ FUSION_MODEL.load_state_dict(torch.load("models/fusion_mlp_best.pth",
 FUSION_MODEL.eval()
 
 SCALER = joblib.load("models/tabular_scaler_v2.pkl")
+TUNED_XGB = joblib.load("models/xgboost_tuned.pkl")
 
 print("All models loaded successfully!")
 
