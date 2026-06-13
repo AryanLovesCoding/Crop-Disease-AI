@@ -12,7 +12,7 @@ from torchvision import models, transforms
 from PIL import Image
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pytorch_grad_cam import GradCAM
+from pytorch_grad_cam import GradCAMPlusPlus
 from pytorch_grad_cam.utils.image import show_cam_on_image
 from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
 
@@ -63,7 +63,7 @@ async def load_models():
     EMBEDDING_MODEL = nn.Sequential(*list(RESNET.children())[:-1])
     EMBEDDING_MODEL.eval()
 
-    GRAD_CAM = GradCAM(model=RESNET, target_layers=[RESNET.layer4[-1]])
+    GRAD_CAM = GradCAMPlusPlus(model=RESNET, target_layers=[RESNET.layer4[-1]])
 
     class FusionMLP(nn.Module):
         def __init__(self, input_dim, num_classes):
