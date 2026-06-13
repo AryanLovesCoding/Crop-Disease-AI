@@ -82,6 +82,22 @@ async def load_models():
     FUSION_MODEL.eval()
 
     SCALER = joblib.load("models/tabular_scaler_v2.pkl")
+
+    # Compile models for faster inference
+    try:
+        EMBEDDING_MODEL = torch.compile(EMBEDDING_MODEL)
+        FUSION_MODEL = torch.compile(FUSION_MODEL)
+        # Warmup compiled models
+        dummy = torch.randn(1, 3, 224, 224)
+        with torch.inference_mode():
+            emb = EMBEDDING_MODEL(dummy)
+            emb = emb.squeeze(-1).squeeze(-1)
+            tab = torch.zeros(1, 9)
+            fused = torch.cat([emb, tab], dim=1)
+            _ = FUSION_MODEL(fused)
+        print("Models compiled successfully!")
+    except Exception as e:
+        print(f"Compilation skipped: {e}")
     print("All models loaded successfully!")
 
 def image_to_base64(img_array):
@@ -135,7 +151,7 @@ async def predict(
     orig_np = np.array(orig_resized) / 255.0
     img_tensor = TRANSFORM(orig_img).unsqueeze(0)
 
-    with torch.no_grad():
+    with torch.inference_mode():
         embedding = EMBEDDING_MODEL(img_tensor)
         embedding = embedding.squeeze(-1).squeeze(-1).numpy()
 
@@ -147,7 +163,7 @@ async def predict(
     fused = np.concatenate([embedding, tab_scaled], axis=1)
     fused_tensor = torch.tensor(fused, dtype=torch.float32)
 
-    with torch.no_grad():
+    with torch.inference_mode():
         outputs = FUSION_MODEL(fused_tensor)
         probs = torch.softmax(outputs, dim=1)
         confidence, predicted = probs.max(1)
@@ -155,7 +171,7 @@ async def predict(
     disease = IMAGE_CLASSES[predicted.item()]
     confidence_pct = round(confidence.item() * 100, 2)
 
-    with torch.no_grad():
+    with torch.inference_mode():
         resnet_out = RESNET(img_tensor)
         _, resnet_pred = resnet_out.max(1)
 
