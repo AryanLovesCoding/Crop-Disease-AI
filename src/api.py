@@ -6,6 +6,8 @@ import json
 import pickle
 import io
 import base64
+import tempfile
+import os
 from torchvision import models, transforms
 from PIL import Image
 from fastapi import FastAPI, File, UploadFile, HTTPException
@@ -23,59 +25,66 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── Load everything at startup ──
-with open("data/processed/data_splits.pkl", "rb") as f:
-    image_data = pickle.load(f)
-IMAGE_CLASSES = image_data["classes"]
+# Global model variables
+IMAGE_CLASSES = None
+TREATMENTS = None
+TRANSFORM = None
+RESNET = None
+EMBEDDING_MODEL = None
+GRAD_CAM = None
+FUSION_MODEL = None
+SCALER = None
 
-with open("data/treatments.json") as f:
-    TREATMENTS = json.load(f)
+@app.on_event("startup")
+async def load_models():
+    global IMAGE_CLASSES, TREATMENTS, TRANSFORM
+    global RESNET, EMBEDDING_MODEL, GRAD_CAM, FUSION_MODEL, SCALER
 
-TRANSFORM = transforms.Compose([
-    transforms.Resize((224, 224)),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                         std=[0.229, 0.224, 0.225])
-])
+    with open("data/processed/data_splits.pkl", "rb") as f:
+        image_data = pickle.load(f)
+    IMAGE_CLASSES = image_data["classes"]
 
-# Load ResNet50 — keep full model for GradCAM
-RESNET = models.resnet50(weights=None)
-RESNET.fc = nn.Linear(2048, len(IMAGE_CLASSES))
-RESNET.load_state_dict(torch.load("models/resnet50_finetuned.pth",
-                                   map_location="cpu"))
-RESNET.eval()
+    with open("data/treatments.json") as f:
+        TREATMENTS = json.load(f)
 
-# Feature extractor (no final layer)
-EMBEDDING_MODEL = nn.Sequential(*list(RESNET.children())[:-1])
-EMBEDDING_MODEL.eval()
+    TRANSFORM = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                             std=[0.229, 0.224, 0.225])
+    ])
 
-# GradCAM on last conv layer
-GRAD_CAM = GradCAM(model=RESNET, target_layers=[RESNET.layer4[-1]])
+    RESNET = models.resnet50(weights=None)
+    RESNET.fc = nn.Linear(2048, len(IMAGE_CLASSES))
+    RESNET.load_state_dict(torch.load("models/resnet50_balanced.pth",
+                                       map_location="cpu"))
+    RESNET.eval()
 
-# Fusion MLP
-class FusionMLP(nn.Module):
-    def __init__(self, input_dim, num_classes):
-        super().__init__()
-        self.network = nn.Sequential(
-            nn.Linear(input_dim, 512), nn.ReLU(), nn.Dropout(0.3),
-            nn.Linear(512, 256), nn.ReLU(), nn.Dropout(0.3),
-            nn.Linear(256, num_classes)
-        )
-    def forward(self, x):
-        return self.network(x)
+    EMBEDDING_MODEL = nn.Sequential(*list(RESNET.children())[:-1])
+    EMBEDDING_MODEL.eval()
 
-FUSION_MODEL = FusionMLP(input_dim=2057, num_classes=15)
-FUSION_MODEL.load_state_dict(torch.load("models/fusion_mlp_best.pth",
-                                         map_location="cpu"))
-FUSION_MODEL.eval()
+    GRAD_CAM = GradCAM(model=RESNET, target_layers=[RESNET.layer4[-1]])
 
-SCALER = joblib.load("models/tabular_scaler_v2.pkl")
-TUNED_XGB = joblib.load("models/xgboost_tuned.pkl")
+    class FusionMLP(nn.Module):
+        def __init__(self, input_dim, num_classes):
+            super().__init__()
+            self.network = nn.Sequential(
+                nn.Linear(input_dim, 512), nn.ReLU(), nn.Dropout(0.3),
+                nn.Linear(512, 256), nn.ReLU(), nn.Dropout(0.3),
+                nn.Linear(256, num_classes)
+            )
+        def forward(self, x):
+            return self.network(x)
 
-print("All models loaded successfully!")
+    FUSION_MODEL = FusionMLP(input_dim=2057, num_classes=15)
+    FUSION_MODEL.load_state_dict(torch.load("models/fusion_mlp_best.pth",
+                                             map_location="cpu"))
+    FUSION_MODEL.eval()
+
+    SCALER = joblib.load("models/tabular_scaler_v2.pkl")
+    print("All models loaded successfully!")
 
 def image_to_base64(img_array):
-    """Convert numpy image array to base64 string."""
     img = Image.fromarray(img_array)
     buffer = io.BytesIO()
     img.save(buffer, format="PNG")
@@ -109,9 +118,7 @@ async def predict(
     if file.content_type and not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="File must be an image")
 
-    # Load image
     contents = await file.read()
-    import tempfile, os
     suffix = os.path.splitext(file.filename)[-1] or ".jpg"
     with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
         tmp.write(contents)
@@ -124,23 +131,19 @@ async def predict(
     finally:
         os.unlink(tmp_path)
 
-    # Preprocess
     orig_resized = orig_img.resize((224, 224))
     orig_np = np.array(orig_resized) / 255.0
     img_tensor = TRANSFORM(orig_img).unsqueeze(0)
 
-    # Get image embedding
     with torch.no_grad():
         embedding = EMBEDDING_MODEL(img_tensor)
         embedding = embedding.squeeze(-1).squeeze(-1).numpy()
 
-    # Preprocess tabular
     tab_values = np.array([[soil_pH, nitrogen, phosphorus, potassium,
                             temperature, humidity, rainfall,
                             crop_age_days, sunlight_hours]])
     tab_scaled = SCALER.transform(tab_values)
 
-    # Fuse and predict
     fused = np.concatenate([embedding, tab_scaled], axis=1)
     fused_tensor = torch.tensor(fused, dtype=torch.float32)
 
@@ -152,7 +155,6 @@ async def predict(
     disease = IMAGE_CLASSES[predicted.item()]
     confidence_pct = round(confidence.item() * 100, 2)
 
-    # Generate GradCAM using ResNet prediction
     with torch.no_grad():
         resnet_out = RESNET(img_tensor)
         _, resnet_pred = resnet_out.max(1)
@@ -165,7 +167,6 @@ async def predict(
                                     grayscale_cam, use_rgb=True)
     gradcam_b64 = image_to_base64(cam_overlay)
 
-    # Get treatment
     treatment = TREATMENTS.get(disease, {
         "severity": "Unknown",
         "description": "No information available.",
