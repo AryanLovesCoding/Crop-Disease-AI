@@ -1,31 +1,52 @@
 
-╔══════════════════════════════════════════════════════════════╗
-║           CROP DISEASE AI — FINAL EVALUATION REPORT          ║
-╚══════════════════════════════════════════════════════════════╝
+╔══════════════════════════════════════════════════════════════════╗
+║         CROP DISEASE AI — FINAL EVALUATION REPORT               ║
+║         Generated on Day 24                                      ║
+╚══════════════════════════════════════════════════════════════════╝
 
-DATASET
-  Total test samples:     3096
-  Number of classes:      15
-  Crops covered:          Tomato, Potato, Pepper
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DATASET SUMMARY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Source:               PlantVillage Dataset (Kaggle)
+  Total images:         20,637
+  Training images:      14,453
+  Validation images:    3,088
+  Test images:          3,096
+  Number of classes:    15
+  Crops covered:        Tomato (10), Potato (3), Pepper (2)
 
-MODEL PERFORMANCE
-  Test Accuracy:          99.74%
-  F1 Score (macro):       0.9972
-  F1 Score (weighted):    0.9974
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MODEL ARCHITECTURE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Image Model:          ResNet50 (pretrained ImageNet, fine-tuned)
+  Tabular Model:        XGBoost (9 features)
+  Fusion Model:         MLP (2057 → 512 → 256 → 15)
+  Explainability:       GradCAM++
+  Parameters:           23,538,767 (ResNet50)
 
-TRAINING APPROACH
-  Base model:             ResNet50 (pretrained ImageNet)
-  Fine-tuning:            Full model, layer-wise learning rates
-  Class imbalance fix:    WeightedRandomSampler
-  Augmentation:           Flip, Rotate, ColorJitter, Grayscale
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FINAL MODEL PERFORMANCE (TEST SET)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Test Accuracy:        99.74%
+  F1 Score (macro):     0.9972
+  F1 Score (weighted):  0.9974
+  Precision (macro):    0.9969
+  Recall (macro):       0.9976
 
-API PERFORMANCE
-  Endpoint:               POST /predict
-  Input:                  Leaf image + 9 tabular features
-  Output:                 Disease, confidence, treatment, Grad-CAM
-  Sample accuracy:        5/5 (100%)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MODEL PROGRESSION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Day 4  — Transfer learning:         91.9%  (val)
+  Day 5  — Full fine-tuning:          99.52% (test)
+  Day 6  — XGBoost tabular:           99.50% (test)
+  Day 7  — Multimodal fusion:         99.80% (test)
+  Day 12 — Balanced sampling:         99.74% (test)
+  Day 15 — XGBoost tuned:             99.70% (test)
+  Day 16 — Real-world augmentation:   99.29% (test)
 
-PER-CLASS REPORT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PER-CLASS PERFORMANCE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                                              precision    recall  f1-score   support
 
               Pepper__bell___Bacterial_spot       0.99      1.00      1.00       149
@@ -48,3 +69,26 @@ Tomato_Spider_mites_Two_spotted_spider_mite       1.00      1.00      1.00      
                                   macro avg       1.00      1.00      1.00      3096
                                weighted avg       1.00      1.00      1.00      3096
 
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+API PERFORMANCE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Average response time: 0.17s
+  Requests per second:   ~6 req/s
+  Deployment:            Docker container
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+LIMITATIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  - Trained on controlled PlantVillage images
+  - Real-world field photos may reduce accuracy to ~75-80%
+  - Tabular data is synthetic
+  - Supports 3 crops only
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OUTPUT FILES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  outputs/final_confusion_matrix.png
+  outputs/per_class_performance.png
+  outputs/model_progression.png
+  outputs/dataset_analysis.png
+  outputs/gradcam/all_classes_gradcam.png
