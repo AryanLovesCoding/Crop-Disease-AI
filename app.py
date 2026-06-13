@@ -14,6 +14,16 @@ st.set_page_config(
 st.markdown("""
     <style>
         #MainMenu {visibility: hidden;}
+        /* Black background */
+        .stApp {
+            background-color: #000000 !important;
+        }
+        [data-testid="stSidebar"] {
+            background-color: #0a0a0a !important;
+        }
+        [data-testid="stHeader"] {
+            background-color: #000000 !important;
+        }
         .stAppDeployButton {visibility: hidden;}
         footer {visibility: hidden;}
         .stAlert { border-radius: 12px; }
@@ -31,6 +41,7 @@ st.markdown("""
             background: linear-gradient(135deg, #27ae60, #1e8449);
             transform: scale(1.02);
         }
+        /* Falling leaves */
         @keyframes fall {
             0%   { transform: translateY(-20px) rotate(0deg);   opacity: 1; }
             100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
@@ -43,10 +54,81 @@ st.markdown("""
             pointer-events: none;
             z-index: 0;
         }
+        /* Floating particles */
+        @keyframes float-up {
+            0%   { transform: translateY(100vh) scale(0.5); opacity: 0; }
+            10%  { opacity: 0.6; }
+            90%  { opacity: 0.4; }
+            100% { transform: translateY(-20px) scale(1); opacity: 0; }
+        }
+        .particle {
+            position: fixed;
+            bottom: -10px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(46, 204, 113, 0.4);
+            animation: float-up linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        /* Pulse button */
+        @keyframes pulse {
+            0%   { box-shadow: 0 0 0 0 rgba(46,204,113,0.6); }
+            70%  { box-shadow: 0 0 0 12px rgba(46,204,113,0); }
+            100% { box-shadow: 0 0 0 0 rgba(46,204,113,0); }
+        }
+        .stButton > button {
+            animation: pulse 2s infinite;
+        }
+        /* Confidence bar animation */
+        @keyframes fill-bar {
+            0%   { width: 0%; }
+            100% { width: var(--target-width); }
+        }
+        .conf-bar-fill {
+            animation: fill-bar 1.2s ease-out forwards;
+        }
+        /* Card slide in */
+        @keyframes slide-in {
+            0%   { transform: translateX(-30px); opacity: 0; }
+            100% { transform: translateX(0);     opacity: 1; }
+        }
+        .slide-card-1 { animation: slide-in 0.4s ease-out 0.1s both; }
+        .slide-card-2 { animation: slide-in 0.4s ease-out 0.3s both; }
+        .slide-card-3 { animation: slide-in 0.4s ease-out 0.5s both; }
+        /* Shimmer loader */
+        @keyframes shimmer {
+            0%   { background-position: -400px 0; }
+            100% { background-position: 400px 0; }
+        }
+        .shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 400px 100%;
+            animation: shimmer 1.4s infinite;
+            border-radius: 8px;
+            height: 20px;
+            margin: 8px 0;
+        }
+        /* Typewriter */
+        @keyframes typewriter {
+            from { width: 0; }
+            to   { width: 100%; }
+        }
+        @keyframes blink {
+            50% { border-color: transparent; }
+        }
+        .typewriter {
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid #27ae60;
+            animation: typewriter 1.5s steps(30) forwards,
+                       blink 0.7s step-end 1.5s forwards;
+        }
         .hint-box {
             position: fixed;
-            top: 0.35rem;
-            left: 3.2rem;
+            top: 0.6rem;
+            left: 2.8rem;
             z-index: 9999;
             background: #e8f8ee;
             padding: 2px 10px;
@@ -59,25 +141,26 @@ st.markdown("""
         }
     </style>
 
-    <div class="hint-box">≫ click for field conditions</div>
+    <div class="hint-box">≫ Open to change conditions</div>
 
     <div style="position:fixed;top:0;left:0;width:100%;height:100%;
                 pointer-events:none;z-index:0;overflow:hidden;">
-        <span class="leaf" style="left:5%;  animation-duration:8s;  animation-delay:0s;">🍃</span>
-        <span class="leaf" style="left:15%; animation-duration:12s; animation-delay:2s;">🌿</span>
-        <span class="leaf" style="left:25%; animation-duration:9s;  animation-delay:4s;">🍃</span>
-        <span class="leaf" style="left:40%; animation-duration:11s; animation-delay:1s;">🌱</span>
-        <span class="leaf" style="left:55%; animation-duration:10s; animation-delay:3s;">🍃</span>
-        <span class="leaf" style="left:65%; animation-duration:7s;  animation-delay:5s;">🌿</span>
-        <span class="leaf" style="left:75%; animation-duration:13s; animation-delay:2s;">🍃</span>
-        <span class="leaf" style="left:85%; animation-duration:9s;  animation-delay:6s;">🌱</span>
-        <span class="leaf" style="left:92%; animation-duration:11s; animation-delay:1s;">🍃</span>
+        <span class="leaf" style="left:10%; animation-duration:10s; animation-delay:0s;">🍃</span>
+        <span class="leaf" style="left:40%; animation-duration:14s; animation-delay:3s;">🌿</span>
+        <span class="leaf" style="left:70%; animation-duration:11s; animation-delay:6s;">🍃</span>
+        <span class="leaf" style="left:90%; animation-duration:13s; animation-delay:1s;">🌱</span>
+        <div class="particle" style="left:20%; animation-duration:8s;  animation-delay:0s;"></div>
+        <div class="particle" style="left:35%; animation-duration:11s; animation-delay:2s;"></div>
+        <div class="particle" style="left:55%; animation-duration:9s;  animation-delay:4s;"></div>
+        <div class="particle" style="left:75%; animation-duration:12s; animation-delay:1s;"></div>
+        <div class="particle" style="left:88%; animation-duration:10s; animation-delay:3s;"></div>
     </div>
 """, unsafe_allow_html=True)
 
 # ── Header ──
 st.markdown(
-    '<h1 style="font-size:2.2rem;margin:0;font-weight:900;letter-spacing:-1px;">'
+    '<div style="text-align:center;">'
+    '<h1 style="font-size:2.8rem;margin:0;font-weight:900;letter-spacing:-1px;">'
     '<span style="background:linear-gradient(135deg,#1a7a3c,#2ecc71);'
     '-webkit-background-clip:text;-webkit-text-fill-color:transparent;">🌿 Crop </span>'
     '<span style="background:linear-gradient(135deg,#27ae60,#52d68a);'
@@ -87,6 +170,7 @@ st.markdown(
     '</h1>'
     '<p style="font-size:0.85rem;color:#888;margin:0.2rem 0 0.3rem 0;">'
     'Multimodal AI diagnostic system — upload a leaf, get instant disease analysis</p>'
+    '</div>'
     '<hr style="border:1px solid #eee;margin:0.3rem 0 0 0;">',
     unsafe_allow_html=True
 )
@@ -155,11 +239,29 @@ with col2:
         if diagnose:
             progress = st.progress(0)
             status   = st.empty()
-            status.markdown("🔄 *Preprocessing image...*")
+            status.markdown("""
+                <div>
+                    <div class="shimmer" style="width:80%;"></div>
+                    <div class="shimmer" style="width:60%;"></div>
+                    <div class="shimmer" style="width:70%;"></div>
+                    <p style="color:#27ae60;font-size:0.9rem;margin-top:8px;">
+                        🔄 Preprocessing image...
+                    </p>
+                </div>
+            """, unsafe_allow_html=True)
             for i in range(30):
                 time.sleep(0.01)
                 progress.progress(i)
-            status.markdown("🧠 *Running AI analysis...*")
+            status.markdown("""
+                <div>
+                    <div class="shimmer" style="width:90%;"></div>
+                    <div class="shimmer" style="width:65%;"></div>
+                    <div class="shimmer" style="width:75%;"></div>
+                    <p style="color:#27ae60;font-size:0.9rem;margin-top:8px;">
+                        🧠 Running AI analysis...
+                    </p>
+                </div>
+            """, unsafe_allow_html=True)
 
             try:
                 response = requests.post(
@@ -193,11 +295,12 @@ with col2:
                 bg  = "#d4edda" if is_healthy else "#f8d7da"
                 bc  = "#28a745" if is_healthy else "#dc3545"
                 tc  = "#155724" if is_healthy else "#721c24"
+                disease_name = data["disease"].replace("_"," ")
                 st.markdown(
                     f'<div style="background:{bg};border-left:5px solid {bc};'
                     f'padding:1rem 1.5rem;border-radius:8px;margin:0.5rem 0;">'
-                    f'<h3 style="margin:0;color:{tc};">{emoji} '
-                    f'{data["disease"].replace("_"," ")}</h3></div>',
+                    f'<div class="typewriter" style="color:{tc};font-size:1.3rem;'
+                    f'font-weight:700;">{emoji} {disease_name}</div></div>',
                     unsafe_allow_html=True
                 )
 
@@ -208,19 +311,28 @@ with col2:
                     f'<p style="margin:0;font-size:0.9rem;color:#666;">'
                     f'Confidence: <strong>{conf}%</strong></p>'
                     f'<div style="background:#eee;border-radius:10px;height:12px;">'
-                    f'<div style="width:{conf}%;background:{conf_color};'
+                    f'<div class="conf-bar-fill" style="--target-width:{conf}%;'
+                    f'width:{conf}%;background:{conf_color};'
                     f'height:12px;border-radius:10px;"></div></div></div>',
                     unsafe_allow_html=True
                 )
                 st.markdown(f"**Severity:** :{color}[{data['severity']}] — {data['urgency']}")
                 st.divider()
 
+                st.markdown('<div class="slide-card-1">', unsafe_allow_html=True)
                 with st.expander("📋 Description", expanded=True):
                     st.info(data["description"])
+                st.markdown('</div>', unsafe_allow_html=True)
+
+                st.markdown('<div class="slide-card-2">', unsafe_allow_html=True)
                 with st.expander("💊 Treatment", expanded=True):
                     st.success(data["treatment"])
+                st.markdown('</div>', unsafe_allow_html=True)
+
+                st.markdown('<div class="slide-card-3">', unsafe_allow_html=True)
                 with st.expander("🛡️ Prevention", expanded=True):
                     st.warning(data["prevention"])
+                st.markdown('</div>', unsafe_allow_html=True)
 
                 st.session_state["last_data"] = data
                 st.session_state["last_file"] = uploaded_file
