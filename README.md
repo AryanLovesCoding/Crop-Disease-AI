@@ -60,8 +60,19 @@ Run notebooks in order:
 - `notebooks/day7_fusion_model.ipynb`
 
 ### 5. Start the API
-```bash
+
+**Option A — Direct (recommended for development):**
+````bash
 uvicorn src.api:app --port 8000
+````
+
+**Option B — Docker (recommended for deployment):**
+````bash
+docker build -t cropai .
+docker run -p 8000:8000 \
+  -v $(pwd)/models:/app/models \
+  -v $(pwd)/data:/app/data \
+  cropai
 ```
 
 ### 6. Start the frontend
