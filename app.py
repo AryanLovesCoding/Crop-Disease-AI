@@ -317,6 +317,8 @@ with col2:
                     unsafe_allow_html=True
                 )
                 st.markdown(f"**Severity:** :{color}[{data['severity']}] — {data['urgency']}")
+                if conf < 75:
+                    st.warning("⚠️ Low confidence prediction — consider consulting an agricultural expert or retaking the photo in better lighting.")
                 st.divider()
 
                 st.markdown('<div class="slide-card-1">', unsafe_allow_html=True)

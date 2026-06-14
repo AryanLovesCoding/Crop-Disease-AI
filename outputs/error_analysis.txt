@@ -1,0 +1,28 @@
+
+ERROR ANALYSIS REPORT — Day 25
+================================
+
+Total errors: 8 / 3096 (0.26% error rate)
+
+KEY FINDINGS:
+1. Most confused pair: Tomato Late Blight → Early Blight (2 cases)
+   - Both diseases show dark lesions on leaves
+   - Fix: Add more diverse samples of both classes
+
+2. High confidence errors (3 cases):
+   - Model was >90% confident but wrong
+   - Hardest to fix — need more training diversity
+
+3. Low confidence errors (4 cases):
+   - Model signaled uncertainty (52-69% confidence)
+   - Good: farmers should seek second opinion at low confidence
+
+4. Classes with highest error rates:
+   - Tomato Target Spot: 0.9%
+   - Pepper healthy: 0.9%
+   - Tomato Late Blight: 0.7%
+
+RECOMMENDATIONS:
+- Add confidence threshold warning in UI (flag predictions below 75%)
+- Collect more diverse training images for confused pairs
+- Consider ensemble approach for similar-looking diseases
