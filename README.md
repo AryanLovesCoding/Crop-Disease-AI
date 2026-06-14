@@ -9,6 +9,10 @@
 
 **An AI-powered diagnostic system that identifies crop diseases from leaf images and field conditions with 99.74% accuracy.**
 
+## 🎥 Demo Video
+
+https://github.com/user-attachments/assets/42e28f91-6279-4288-ad32-0c38f203ae0d
+
 ---
 
 ## 📌 Overview
